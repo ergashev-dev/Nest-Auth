@@ -7,10 +7,13 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import bcrypt from 'bcrypt';
+import { AuthService } from '../auth/auth.service.js';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService,
+    private authService: AuthService
+  ) {}
 
   // REGISTER
   async register(body: RegisterDto) {
@@ -57,8 +60,13 @@ export class UsersService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    const token = this.authService.generateToken({
+      id: user.id,
+      email: user.email
+    })
     return {
       message: 'Login successful',
+      accsess_token: token,
       user: {
         id: user.id,
         name: user.name,
