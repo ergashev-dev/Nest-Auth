@@ -9,12 +9,14 @@ import {
 import { UsersService } from './users.service.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
+import { Roles } from '../common/decarators/roles.decorator.js';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('register')
+  @Roles('ADMIN')
   register(@Body() body: RegisterDto) {
     return this.usersService.register(body);
   }
